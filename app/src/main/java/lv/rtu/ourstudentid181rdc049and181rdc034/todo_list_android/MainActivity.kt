@@ -1,35 +1,33 @@
 package lv.rtu.ourstudentid181rdc049and181rdc034.todo_list_android
 
+import android.app.Activity
 import android.os.Bundle
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Observer
-import androidx.recyclerview.widget.LinearLayoutManager
-import kotlinx.android.synthetic.main.activity_main.*
+import androidx.navigation.NavController
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.ui.setupActionBarWithNavController
+import dagger.hilt.android.AndroidEntryPoint
 
-// TODO nothing works
-class MainActivity : AppCompatActivity(), TaskEventsInterface {
-    private val taskViewModel: TasksViewModel by viewModels()
-    private lateinit var taskRecyclerView: TaskRecyclerView
+@AndroidEntryPoint
+class MainActivity : AppCompatActivity() {
+    private lateinit var navController: NavController
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        tasks_list.layoutManager = LinearLayoutManager(this)
-        taskRecyclerView = TaskRecyclerView(this)
-        tasks_list.adapter = taskRecyclerView
+        val navHostFragment =
+            supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+        navController = navHostFragment.findNavController()
 
-        taskViewModel.getTasks().observe(this, Observer {
-            taskRecyclerView.setTasks(it)
-        })
+        setupActionBarWithNavController(navController)
     }
 
-    override fun onItemDeleted(task: Task, position: Int) {
-        TODO("Not yet implemented")
-    }
-
-    override fun onViewClicked(task: Task) {
-        TODO("Not yet implemented")
+    override fun onSupportNavigateUp(): Boolean {
+        return navController.navigateUp() || super.onSupportNavigateUp()
     }
 }
+
+const val ADD_TASK_RESULT_OK = Activity.RESULT_FIRST_USER
+const val EDIT_TASK_RESULT_OK = Activity.RESULT_FIRST_USER + 1
